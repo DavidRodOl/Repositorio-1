@@ -8,10 +8,14 @@ import numpy as np
 R0 = 100 
 A = 3.9083e-3
 B = -5.775e-7
+C = -4.183e-12
 T = 60
 
 def calcular_resistencia(T):
-    R = R0 * (1 + (A * T) + (B * (T**2)))
+    if T >= 0:
+        R = R0 * (1 + (A * T) + (B * (T**2)))
+    else:
+        R = R0 * (1 + (A * T) + (B * (T**2)) + (C * (T - 100) * (T**3)))
     return R
 
 resistencia_actual = calcular_resistencia(T)

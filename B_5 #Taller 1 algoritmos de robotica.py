@@ -13,7 +13,7 @@ def bucle_troll():
             break
         
         elif respuesta == "si":
-            print("ou nou encarcelado :(\n")
+            print("ou nou encarcelado\n")
             
         else:
             print("Opción no válida. Por favor intente de nuevo\n")

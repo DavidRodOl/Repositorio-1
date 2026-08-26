@@ -10,15 +10,8 @@ def sistema_segundo_orden():
     print("Sistema de Segundo Orden")
     
     k = float(input("Ingrese la ganancia K: "))
-    a = float(input("Ingrese el coeficiente a (s^2): "))
-    b = float(input("Ingrese el coeficiente b (s): "))
-    c = float(input("Ingrese el coeficiente c: "))
-    
-    wn = np.sqrt(c / a)
-    zeta = b / (2 * a * wn)
-    
-    print(f"Wn: {wn:.4f} rad/s")
-    print(f"Zeta: {zeta:.4f}")
+    wn = float(input("Ingrese la frecuencia natural Wn (rad/s): "))
+    zeta = float(input("Ingrese el factor de amortiguamiento Zeta: "))
     
     if zeta < 1:
         tipo = "Subamortiguado"
@@ -28,6 +21,12 @@ def sistema_segundo_orden():
         tipo = "Sobreamortiguado"
     
     print(f"Tipo de sistema: {tipo}")
+    
+    #Coeficientes de la ecuacion diferencial a partir de Wn y Zeta
+    a = 1
+    b = 2 * zeta * wn
+    c = wn**2
+    entrada = k * wn**2
     
     #Ventana de tiempo y pasos segun que tan rapido o lento se mueve el sistema
     if zeta > 1:
@@ -46,10 +45,10 @@ def sistema_segundo_orden():
     dy = np.zeros(n + 1)
     
     for i in range(n):
-        k1y, k1dy = dy[i], (k - b * dy[i] - c * y[i]) / a
-        k2y, k2dy = dy[i] + 0.5*dt*k1dy, (k - b*(dy[i]+0.5*dt*k1dy) - c*(y[i]+0.5*dt*k1y)) / a
-        k3y, k3dy = dy[i] + 0.5*dt*k2dy, (k - b*(dy[i]+0.5*dt*k2dy) - c*(y[i]+0.5*dt*k2y)) / a
-        k4y, k4dy = dy[i] + dt*k3dy, (k - b*(dy[i]+dt*k3dy) - c*(y[i]+dt*k3y)) / a
+        k1y, k1dy = dy[i], (entrada - b * dy[i] - c * y[i]) / a
+        k2y, k2dy = dy[i] + 0.5*dt*k1dy, (entrada - b*(dy[i]+0.5*dt*k1dy) - c*(y[i]+0.5*dt*k1y)) / a
+        k3y, k3dy = dy[i] + 0.5*dt*k2dy, (entrada - b*(dy[i]+0.5*dt*k2dy) - c*(y[i]+0.5*dt*k2y)) / a
+        k4y, k4dy = dy[i] + dt*k3dy, (entrada - b*(dy[i]+dt*k3dy) - c*(y[i]+dt*k3y)) / a
         
         y[i+1] = y[i] + (dt/6) * (k1y + 2*k2y + 2*k3y + k4y)
         dy[i+1] = dy[i] + (dt/6) * (k1dy + 2*k2dy + 2*k3dy + k4dy)
@@ -57,7 +56,7 @@ def sistema_segundo_orden():
     #Graficacion
     plt.figure(figsize=(8, 5))
     plt.plot(t, y, 'b-', label='Respuesta al escalon', linewidth=2)
-    plt.axhline(k / c, color='r', linestyle='--', label=f'Valor final = {k/c:.4f}')
+    plt.axhline(k, color='r', linestyle='--', label=f'Valor final = {k:.4f}')
     plt.title(f'Respuesta del Sistema - {tipo}')
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Amplitud')

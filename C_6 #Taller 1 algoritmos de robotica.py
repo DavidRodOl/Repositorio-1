@@ -1,5 +1,5 @@
-#Taller 1 algoritmos de robotica 
-#David Alejandro Rodriguez Olaya y Robin Santigo Rojas Guzman
+ #Taller 1 algoritmos de robotica 
+#David Alejandro Rodriguez Olaya y Robin Santiago Rojas Guzman
 #A.6
 
 import cv2
@@ -10,7 +10,7 @@ def obtener_contornos(ruta_imagen):
     imagen = cv2.imread(ruta_imagen)
     gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
     _, binaria = cv2.threshold(gris, 127, 255, cv2.THRESH_BINARY_INV)
-    contornos, _ = cv2.findContours(binaria, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contornos, _ = cv2.findContours(binaria, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     return imagen, contornos
 
 def imprimir_coordenadas(contornos, nombre_logo):
