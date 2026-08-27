@@ -4,7 +4,10 @@
 
 #Importar librerias 
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+from scipy import signal  
 
 def sistema_segundo_orden():
     print("Sistema de Segundo Orden")
@@ -22,7 +25,7 @@ def sistema_segundo_orden():
     
     print(f"Tipo de sistema: {tipo}")
     
-    #Coeficientes de la ecuacion diferencial a partir de Wn y Zeta
+    #Coeficientes de la ecuacion diferencial ( Wn y Z )
     a = 1
     b = 2 * zeta * wn
     c = wn**2
@@ -32,26 +35,17 @@ def sistema_segundo_orden():
     if zeta > 1:
         p1 = zeta * wn - wn * np.sqrt(zeta**2 - 1)
         p2 = zeta * wn + wn * np.sqrt(zeta**2 - 1)
-        tf = 8 / p1
+        tf = ( 8 / p1 )*2
         n = int(max(2000, 60 * (p2 / p1)))
     else:
-        tf = 10 / wn
+        tf = (10 / wn)*2
         n = 2000
     
-    #Simulacion de la respuesta al escalon (Runge-Kutta 4)
-    dt = tf / n
+    num = [entrada]
+    den = [a, b, c]
+    sistema = signal.TransferFunction(num, den)
     t = np.linspace(0, tf, n + 1)
-    y = np.zeros(n + 1)
-    dy = np.zeros(n + 1)
-    
-    for i in range(n):
-        k1y, k1dy = dy[i], (entrada - b * dy[i] - c * y[i]) / a
-        k2y, k2dy = dy[i] + 0.5*dt*k1dy, (entrada - b*(dy[i]+0.5*dt*k1dy) - c*(y[i]+0.5*dt*k1y)) / a
-        k3y, k3dy = dy[i] + 0.5*dt*k2dy, (entrada - b*(dy[i]+0.5*dt*k2dy) - c*(y[i]+0.5*dt*k2y)) / a
-        k4y, k4dy = dy[i] + dt*k3dy, (entrada - b*(dy[i]+dt*k3dy) - c*(y[i]+dt*k3y)) / a
-        
-        y[i+1] = y[i] + (dt/6) * (k1y + 2*k2y + 2*k3y + k4y)
-        dy[i+1] = dy[i] + (dt/6) * (k1dy + 2*k2dy + 2*k3dy + k4dy)
+    t, y = signal.step(sistema, T=t)
     
     #Graficacion
     plt.figure(figsize=(8, 5))
@@ -62,7 +56,8 @@ def sistema_segundo_orden():
     plt.ylabel('Amplitud')
     plt.grid(True)
     plt.legend()
-    plt.show()
+    
+    plt.show(block=True) 
 
 #Main
 sistema_segundo_orden()
